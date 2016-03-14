@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <meta name="generator" content=
+    "HTML Tidy for HTML5 (experimental) for Windows https://github.com/w3c/tidy-html5/tree/c63cc39" />
+    <meta charset="utf-8" />
+
+    <title></title>
+    <script type="text/javascript" src="../js/knockout-3.3.0.js">
+</script>
+</head>
+
+<body>
+    <p>
+    Your country:
+    <select data-bind="options: availableCountries,
+                       optionsText: 'countryName',
+					   optionsValue: 'countryId',
+                       value: selectedCountry,
+                       optionsCaption: 'Choose...'"></select>
+</p>
+ 
+<div > <!-- Appears when you select something -->
+    You have chosen country with population
+    <span data-bind="text: selectedCountry() ? selectedCountry() : 'unknown'"></span>.
+</div>
+ 
+<script type="text/javascript">
+    // Constructor for an object with two properties
+    var Country = function(name, id) {
+        this.countryName = name;
+        this.countryId = id;
+    };
+ 
+    var viewModel = {
+        availableCountries : ko.observableArray([
+            new Country("UK", 1),
+            new Country("USA", 2),
+            new Country("Sweden", 3)
+        ]),
+        selectedCountry : ko.observable(4) 
+    };
+	
+	viewModel.selectedCountry.subscribe(function(value){
+	   console.log(value);
+	});
+	
+	
+	ko.applyBindings(viewModel);
+</script>
+</body>
+</html>

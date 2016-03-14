@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+  <meta name="generator" content="HTML Tidy for HTML5 (experimental) for Windows https://github.com/w3c/tidy-html5/tree/c63cc39" />
+
+  <title>validate example</title>
+  <script type="text/javascript" src="../js/jquery-1.7.2.min.js">
+</script>
+  <script type="text/javascript" src="../js/knockout-3.3.0.js">
+</script>
+  <script type="text/javascript" src="../js/knockout.validation.js">
+</script>
+</head>
+
+<body>
+  <div >
+    <form>
+      <table>
+        <tr>
+          <td>title</td>
+
+          <td><input data-bind="value:title" /></td>
+        </tr>
+        <tr>
+          <td>name</td>
+
+          <td><input data-bind="value:people().name" /></td>
+        </tr>
+
+        <tr>
+          <td>address</td>
+
+          <td><input data-bind="value:people().address" /></td>
+        </tr>
+        <tr>
+          <td colspan="2"><input type="button" value="submit" data-bind="click:submit" /></td>
+        </tr>
+      </table>
+    </form>
+  </div>
+  
+    <script type = "text/javascript">
+	
+	
+   	var People = function () {
+   	 var self = this;
+	 
+   	 self.name = ko.observable().extend({
+   	   required : true
+   	  });
+	  
+   	 self.address = ko.observable().extend({
+   	   required : true
+   	  });
+	  
+   	}
+	
+	ko.validation.rules['remoteValidate'] = {
+	    async: true,
+        validator: function ( val, params ) { 
+            var defaults = {
+			    cache:false,
+                url: 'http://localhost:2222/api/test/validate',
+                type: 'get',
+				dataType: 'JSONP',
+				data: {testValue:val||""}
+            };
+
+            var options = $.extend( defaults, params );
+
+            $.ajax( options );
+        },
+        message: 'Default Invalid Message'
+	};
+    ko.validation.registerExtenders();
+	
+   	var ViewModel = function () {
+   	 var self = this;
+   	 self.people = ko.validatedObservable(new People());
+
+   	 self.title = ko.validatedObservable().extend({
+   	   remoteValidate : {success:function(data){alert(data);}}
+   	  });
+	  
+	  self.title.isValidating.subscribe(function(newValue){
+	    console.log(newValue);
+	  });
+
+   	 self.submit = function () {
+   	  console.log(self.title.error());
+   	 }
+   	}
+   	var vm = new ViewModel();
+   	ko.applyBindings(vm);
+   </script>
+</body>
+</html>

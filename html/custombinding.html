@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script type="text/javascript" src="../js/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="../js/knockout-3.3.0.js"></script>
+</head>
+
+<body>
+<p>
+   input: <input data-bind="precision:inputValue,value:inputValue" /></br>
+   value: <label data-bind="text:inputValue"></label>
+</p>
+ 
+ 
+<script type="text/javascript">
+	ko.bindingHandlers.precision={
+	    init:function(element,valueAccessor,allBindings,viewModel,bindContext){
+			console.log(ko.unwrap(valueAccessor()) + ' init at: ' + new Date());
+			element.onkeyup=function(){
+			    var valuer = valueAccessor();
+				valuer(formatValue(allBindings.get('precision'),ko.unwrap(valuer)));
+			};
+		},
+		update:function(element,valueAccessor,allBindings,viewModel,bindContext){
+			var value = ko.unwrap(valueAccessor());
+			console.log(value + ' update at: ' + new Date());
+			
+			valueAccessor()(formatValue(allBindings.get('precision'),value))
+		}
+	};
+	
+	function formatValue(precision,value){
+		if(value == null || value == '')
+			return value;
+			
+	    precision = parseInt(precision) || 2;
+		if(precision<0)
+			precision=2;
+		value = parseFloat(value) || 0;
+		return value.toFixed(precision);
+	}
+
+var viewModel = {
+        inputValue: ko.observable(11)
+    };
+	
+	ko.applyBindings(viewModel);
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+</script>
+</body>
+</html>

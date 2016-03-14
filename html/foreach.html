@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+  <meta charset="utf-8" />
+
+  <title></title>
+  <script type="text/javascript" src="../js/knockout-3.3.0.js">
+</script>
+</head>
+
+<body>
+  <div data-bind="foreach:{data:koGroups, as: &#39;g&#39;}">
+    group
+
+    <ul data-bind="foreach:{data:g.children, as: &#39;c&#39;}">
+      <li style="display:block;">- - &#160;&#160; <a data-bind="click:$parentContext.$parent.add">add</a>
+      </li>
+    </ul>
+  </div>
+
+  <div>
+    new group
+
+    <ul data-bind="foreach:{data:oGroups, as: &#39;c&#39;}">
+      <li>- - &#160;&#160; <a data-bind="click:$parent.del">del</a>
+      </li>
+    </ul>
+  </div><script type="text/javascript">
+//<![CDATA[
+            var Person= function(name,age){
+            var self=this;
+            self.name=ko.observable(name);
+            self.age=ko.observable(age);
+            
+            return self;                        
+                }
+        
+        var Group = function(groupName,groupChildren){
+            var self=this;
+                        self.name=groupName;
+                        self.children=ko.observableArray();
+                        
+                        if(groupChildren!=null){
+                           for(var i in groupChildren){
+                               self.children.push(groupChildren[i]);
+                           }
+                        }
+                        
+                        return self;
+        }
+                
+                var originGroups=[{'name':'A',children:[{'name':'Jack','age':1,'group':'A'},{'name':'Jack1','age':11,'group':'A'}]},{'name':'B',children:[{'name':'Tom','age':2,'group':'B'},{'name':'Tom1','age':22,'group':'B'}]}];
+                
+                var ViewModel=function(data){
+                    var self=this;
+                        self.koGroups=ko.observableArray();
+                        self.oGroups=ko.observableArray();
+                        
+                        //将json groups转换成ko的Group列表
+                        for(var i in data){
+                        var current=data[i];
+                                // 如果想要修改绑定的用户信息，current.children需要转化成Person数组
+                        self.koGroups.push(new Group(current.name,current.children));
+                    }
+                        
+                        self.del=function(){
+                            var p=this;
+                                for(var i in self.koGroups()){
+                                   var g=self.koGroups()[i];
+                                   if(g.name==p.group){
+                                      g.children.push(p);
+                                          break;
+                                   }
+                                }
+                                
+                                self.oGroups.remove(p);
+                        }
+                        
+                        self.add=function(){
+                            var p =this;
+                                for(var i in self.koGroups()){
+                                   var g=self.koGroups()[i];
+                                   if(g.name==p.group){
+                                      g.children.remove(p);
+                                          break;
+                                   }
+                                }
+                                self.oGroups.push(p);
+                        }
+                        
+                }
+                
+                
+                ko.applyBindings(new ViewModel(originGroups));
+                
+                
+                
+                
+                
+  //]]>
+  </script>
+</body>
+</html>
